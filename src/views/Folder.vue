@@ -17,17 +17,17 @@
       </ion-header>
 
       <div id="container">
-<div class="device-wrapper">
-  <div class="device" data-device="iPad" data-orientation="portrait" data-color="black">
-    <div class="screen">
-      <!-- PUT CONTENTS HERE -->
-      hello
-    </div>
-    <div class="button">
-      <!-- You can hook the "home button" to some JavaScript events or just remove it -->
-    </div>
-  </div>
-</div>
+        <div class="device-wrapper">
+          <div class="device" data-device="iPad" data-orientation="portrait" data-color="black">
+            <div class="screen">
+              <!-- PUT CONTENTS HERE -->
+              hello
+            </div>
+            <div class="button">
+              <!-- You can hook the "home button" to some JavaScript events or just remove it -->
+            </div>
+          </div>
+        </div>
       </div>
     </ion-content>
   </ion-page>
@@ -36,7 +36,7 @@
 <script lang="ts">
 import 'html5-device-mockups/dist/device-mockups.min.css'
 
-import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar } from '@ionic/vue';
+import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar } from '@ionic/vue'
 
 export default {
   name: 'Folder',
@@ -47,8 +47,8 @@ export default {
     IonMenuButton,
     IonPage,
     IonTitle,
-    IonToolbar
-  }
+    IonToolbar,
+  },
 }
 </script>
 
