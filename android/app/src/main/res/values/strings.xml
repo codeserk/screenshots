@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">screenshots</string>
+    <string name="title_activity_main">screenshots</string>
+    <string name="package_name">io.ionic.screenshots</string>
+    <string name="custom_url_scheme">io.ionic.screenshots</string>
+</resources>

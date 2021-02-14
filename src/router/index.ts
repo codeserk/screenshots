@@ -4,11 +4,15 @@ import { RouteRecordRaw } from 'vue-router'
 const routes: Array<RouteRecordRaw> = [
   {
     path: '',
-    redirect: '/folder/Inbox',
+    redirect: '/valentine',
   },
   {
     path: '/folder/:id',
     component: () => import('../views/Folder.vue'),
+  },
+  {
+    path: '/valentine',
+    component: () => import('../views/Valentine.vue'),
   },
 ]
 
