@@ -7,6 +7,7 @@ export enum GeometryType {
   Cone = 'cone',
   Sphere = 'sphere',
   Tube = 'tube',
+  Torus = 'torus',
 }
 
 export interface SceneObjectGeometry extends Partial<Record<GeometryType, any>> {
@@ -15,6 +16,7 @@ export interface SceneObjectGeometry extends Partial<Record<GeometryType, any>> 
   [GeometryType.Cone]?: ConeGeometryParams
   [GeometryType.Sphere]?: SphereGeometryParams
   [GeometryType.Tube]?: TubeGeometryParams
+  [GeometryType.Torus]?: TorusGeometryParams
 }
 
 // Geometries
@@ -62,4 +64,12 @@ export interface SphereGeometryParams {
   phiLength?: number
   thetaStart?: number
   thetaLength?: number
+}
+
+export interface TorusGeometryParams {
+  radius?: number
+  tube?: number
+  radialSegments?: number
+  tubularSegments?: number
+  arc?: number
 }

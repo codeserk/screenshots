@@ -24,6 +24,8 @@ export async function createLight(light: SceneLight): Promise<Light> {
     createdLight.castShadow = true
     createdLight.shadow.mapSize.width = 4098
     createdLight.shadow.mapSize.height = 4098
+    // createdLight.shadow.mapSize.width = 256
+    // createdLight.shadow.mapSize.height = 256
     const d = 50
     createdLight.shadow.camera.left = -d
     createdLight.shadow.camera.right = d

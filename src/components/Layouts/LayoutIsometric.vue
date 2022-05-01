@@ -77,8 +77,6 @@ export default defineComponent({
         }
         layout.devices[index] = deviceInfo
 
-        console.log('new layout', layout)
-
         emit('update', layout)
       },
     }

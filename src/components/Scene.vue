@@ -3,12 +3,16 @@
     <div ref="canvasContainer" class="canvas-container"></div>
     <input type="file" @change="onFileChanged($event.target.files)" />
     <ion-button @click="save">Save</ion-button>
+
+    <br />
+    <textarea :value="layers[2].texts[0].message" @input="onMessageChanged($event.target.value)" />
   </div>
 </template>
 
 <script lang="ts">
 import * as THREE from 'three'
-import { computed, defineComponent, onMounted, ref } from 'vue'
+import { debounce } from 'debounce'
+import { computed, defineComponent, nextTick, onMounted, ref } from 'vue'
 import { createScene } from '../modules/scene/scene.controller'
 
 enum Resolution {
@@ -18,7 +22,7 @@ enum Resolution {
 }
 
 const RESOLUTION_WIDTH: Record<Resolution, number> = {
-  [Resolution.Low]: 600,
+  [Resolution.Low]: 250,
   [Resolution.Mid]: 1200,
   [Resolution.High]: 1980,
 }
@@ -36,7 +40,7 @@ export default defineComponent({
     },
   },
 
-  setup(props: any) {
+  setup(props: any, { emit }) {
     // State
     const state = {
       canvasContainer: ref<HTMLElement | undefined>(undefined),
@@ -76,6 +80,12 @@ export default defineComponent({
         scene.render(renderer)
       },
 
+      async createScene() {
+        scene = await createScene({ aspectRatio: props.aspectRatio, layers: props.layers })
+
+        nextTick(() => scene.render(renderer))
+      },
+
       render() {
         scene?.render(renderer)
       },
@@ -99,11 +109,22 @@ export default defineComponent({
 
           scene.setTexture(0, texture)
           setTimeout(() => {
-            requestAnimationFrame(methods.render)
             methods.render()
-          }, 1000)
+          }, 100)
         }
       },
+
+      async onMessageChanged(message: string) {
+        const copy = { ...props.layers[2] }
+        copy.texts[0].message = message
+        emit('update-layer', 2, copy)
+
+        methods.debouncedUpdateScene()
+      },
+
+      debouncedUpdateScene: debounce(async () => {
+        await methods.createScene()
+      }, 1000),
 
       save() {
         methods.render()

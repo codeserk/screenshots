@@ -26,11 +26,12 @@ export async function createScene(params: Scene) {
   // Methods
   const methods = {
     setTexture(index: number, texture: Texture) {
-      setTexture(DeviceType.SamsungS10, getters.deviceObjects.value[index], texture)
+      for (const object of getters.deviceObjects.value) {
+        setTexture(DeviceType.SamsungS10, object, texture)
+      }
     },
 
     render(renderer: WebGLRenderer) {
-      console.log('RENDER!')
       for (const layer of layers) {
         renderer?.clearDepth()
         renderer?.render(layer.scene, layer.camera)

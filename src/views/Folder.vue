@@ -16,9 +16,10 @@
         <scene
           v-for="(scene, index) in scenes"
           :key="index"
+          :aspect-ratio="scene.aspectRatio"
           :layers="scene.layers"
           @update-background="newBackground => (scene.background = newBackground)"
-          @update-layout="newLayout => (scene.layout = newLayout)"
+          @update-layer="(layerIndex, newLayer) => updateSceneLayer(index, layerIndex, newLayer)"
         />
       </div>
     </ion-content>
@@ -31,7 +32,7 @@ import Scene from '@/components/Scene.vue'
 import { defineComponent, ref } from 'vue'
 import { LightType } from '../modules/scene/interfaces/light.interface'
 import { MaterialType } from '../modules/scene/interfaces/material.interface'
-import { Alignment, Scene as SceneParams } from '../modules/scene/interfaces/scene.interface'
+import { Alignment, Scene as SceneParams, SceneLayer } from '../modules/scene/interfaces/scene.interface'
 import { FontType } from '../modules/scene/text/fonts'
 
 // import Device from '../components/Device.vue
@@ -43,21 +44,161 @@ export default defineComponent({
   },
 
   setup() {
-    const devices = []
-    for (let y = 0; y < 6; y++) {
-      for (let x = 0; x < 10; x++) {
-        devices.push({
-          type: 'pixel4xl',
-          origin: 'top left',
-          scale: 0.4,
-          position: {
-            y: `${-320 + y * 105}%`,
-            x: `${-290 + x * 108}%`,
+    // const devices = []
+    // for (let y = 0; y < 6; y++) {
+    //   for (let x = 0; x < 10; x++) {
+    //     devices.push({
+    //       type: 'pixel4xl',
+    //       origin: 'top left',
+    //       scale: 0.4,
+    //       position: {
+    //         y: `${-320 + y * 105}%`,
+    //         x: `${-290 + x * 108}%`,
+    //       },
+    //     })
+    //   }
+    // }
+    const background: Partial<SceneLayer> = {
+      objects: [
+        {
+          geometry: {
+            cone: { radius: 5, height: 5, radialSegments: 20, heightSegments: 20 },
           },
-        })
-      }
+          material: {
+            type: MaterialType.Toon,
+            params: {
+              color: 0x111111,
+            },
+          },
+          transform: {
+            alignment: { x: Alignment.Center, y: Alignment.Center },
+            translate: { z: -4, y: -0.2 },
+            rotateDeg: { x: 25 },
+          },
+        },
+        {
+          geometry: {
+            sphere: { radius: 0.5, widthSegments: 50, heightSegments: 50 },
+          },
+          material: {
+            type: MaterialType.Toon,
+            params: {
+              color: 0x222222,
+            },
+          },
+          transform: {
+            alignment: { x: Alignment.Start, y: Alignment.End },
+            translate: { z: -1, y: 0 },
+            translateRelative: { x: 0.1, y: 0.1, z: -1 },
+          },
+        },
+        {
+          geometry: {
+            sphere: { radius: 0.5, widthSegments: 50, heightSegments: 50 },
+          },
+          material: {
+            type: MaterialType.Toon,
+            params: {
+              color: 0x222222,
+            },
+          },
+          transform: {
+            scaleToViewport: { width: 8 },
+            alignment: { x: Alignment.Center, y: Alignment.Center },
+            translateRelative: { z: -1 },
+            translateRelativeViewport: { x: 3 },
+          },
+        },
+        {
+          geometry: {
+            cone: { radius: 5, height: 6, radialSegments: 50, heightSegments: 50, openEnded: true },
+          },
+          material: {
+            type: MaterialType.Toon,
+            params: {
+              color: 0x111111,
+            },
+          },
+          transform: {
+            alignment: { x: Alignment.Center, y: Alignment.Center },
+            translate: { z: -5, y: -0.2 },
+            translateRelativeViewport: { x: 4 },
+            rotateDeg: { x: 180 },
+          },
+        },
+        {
+          geometry: {
+            torus: { radius: 0.5, radialSegments: 50, tubularSegments: 50, tube: 0.3 },
+          },
+          material: {
+            type: MaterialType.Toon,
+            params: {
+              color: 0x222222,
+            },
+          },
+          transform: {
+            scaleToViewport: { width: 1.5 },
+            alignment: { x: Alignment.Center, y: Alignment.Start },
+            translateRelative: { z: -2, y: 0.5 },
+            translateRelativeViewport: { x: 3 },
+          },
+        },
+      ],
+
+      lights: [
+        { type: LightType.Hemisphere, params: { color: 0xffffff } },
+        {
+          type: LightType.Spot,
+          params: { color: 0xffffff, intensity: 1 },
+          transform: { alignment: { x: Alignment.Center, y: Alignment.Center }, translate: { x: 0, z: 2 } },
+        },
+        {
+          type: LightType.Spot,
+          params: { color: 0xffffff, intensity: 0.5 },
+          transform: { alignment: { x: Alignment.Center, y: Alignment.Center }, translate: { y: 1, z: 2 } },
+          shadow: true,
+        },
+        {
+          type: LightType.Spot,
+          params: { color: 0xffffff, intensity: 0.5 },
+          transform: { alignment: { x: Alignment.Center, y: Alignment.Center }, translate: { x: 0, z: 2 } },
+
+          shadow: true,
+        },
+        {
+          type: LightType.Spot,
+          params: { color: 0xffffff, intensity: 0.1 },
+          transform: { alignment: { x: Alignment.Center, y: Alignment.Center }, translate: { x: 3, z: 5 } },
+
+          shadow: true,
+        },
+        {
+          type: LightType.Spot,
+          params: { color: 0xffffff, intensity: 1 },
+          transform: { alignment: { x: Alignment.Center, y: Alignment.Center }, translate: { x: 15, y: 1, z: -5 } },
+
+          shadow: true,
+        },
+      ],
+
+      devices: [
+        {
+          transform: {
+            scaleToViewport: { height: 0.9 },
+            alignment: { x: Alignment.Start, y: Alignment.Center },
+            rotateDeg: { x: -35, z: 45 },
+          },
+        },
+        {
+          transform: {
+            scaleToViewport: { height: 1.2 },
+            alignment: { x: Alignment.Center, y: Alignment.Center },
+            rotateDeg: { z: -45 },
+            translateRelativeViewport: { x: 4.5 },
+          },
+        },
+      ],
     }
-    console.log(devices)
 
     const scenes: SceneParams[] = [
       {
@@ -65,88 +206,7 @@ export default defineComponent({
         layers: [
           {
             camera: { orthographic: {} },
-            objects: [
-              {
-                geometry: {
-                  cone: { radius: 5, height: 5, radialSegments: 20, heightSegments: 20 },
-                },
-                material: {
-                  type: MaterialType.Toon,
-                  params: {
-                    color: 0x253157,
-                  },
-                },
-                transform: {
-                  alignment: { x: Alignment.Center, y: Alignment.Center },
-                  translate: { z: -4, y: -0.2 },
-                  rotateDeg: { x: 25 },
-                },
-              },
-              {
-                geometry: {
-                  sphere: { radius: 0.5, widthSegments: 100, heightSegments: 100 },
-                },
-                material: {
-                  type: MaterialType.Toon,
-                  params: {
-                    color: 0x564514,
-                  },
-                },
-                transform: {
-                  alignment: { x: Alignment.Start, y: Alignment.End },
-                  translate: { z: -1, y: 0 },
-                  translateRelative: { x: 0.1, y: 0.1 },
-                },
-              },
-              {
-                geometry: {
-                  sphere: { radius: 0.5, widthSegments: 50, heightSegments: 50 },
-                },
-                material: {
-                  type: MaterialType.Toon,
-                  params: {
-                    color: 0x564514,
-                  },
-                },
-                transform: {
-                  scaleToViewport: { width: 6 },
-                  alignment: { x: Alignment.Center, y: Alignment.Center },
-                  translateRelative: { z: -1 },
-                },
-              },
-            ],
-
-            lights: [
-              { type: LightType.Hemisphere, params: { color: 0xffffff } },
-              {
-                type: LightType.Spot,
-                params: { color: 0xffffff, intensity: 1 },
-                transform: { alignment: { x: Alignment.Center, y: Alignment.Center }, translate: { x: 0, z: 2 } },
-              },
-              {
-                type: LightType.Spot,
-                params: { color: 0xffffff, intensity: 0.5 },
-                transform: { alignment: { x: Alignment.Center, y: Alignment.Center }, translate: { y: 1, z: 2 } },
-                shadow: true,
-              },
-              {
-                type: LightType.Spot,
-                params: { color: 0xffffff, intensity: 0.5 },
-                transform: { alignment: { x: Alignment.Center, y: Alignment.Center }, translate: { x: 0, z: 2 } },
-
-                shadow: true,
-              },
-            ],
-
-            devices: [
-              {
-                transform: {
-                  scaleToViewport: { height: 0.75 },
-                  alignment: { x: Alignment.Start, y: Alignment.Center },
-                  rotateDeg: { x: -35, z: 45 },
-                },
-              },
-            ],
+            ...background,
           },
           {
             camera: { orthographic: {} },
@@ -161,21 +221,24 @@ export default defineComponent({
             devices: [
               {
                 transform: {
-                  scaleToViewport: { height: 0.75 },
+                  scaleToViewport: { height: 0.9 },
                   alignment: { x: Alignment.Start, y: Alignment.Center },
                   rotateDeg: { x: -35, z: 45 },
                 },
               },
             ],
+          },
+          {
+            camera: { orthographic: {} },
             texts: [
               {
-                message: 'Asteroids!',
-                font: FontType.CarterOne,
+                message: 'I Ching',
+                font: FontType.Lobster,
                 size: 2.5,
                 shadow: {},
                 transform: {
                   alignment: { x: Alignment.Center, y: Alignment.Start },
-                  translate: { y: -0.4 },
+                  translate: { y: -0.2 },
                 },
               },
             ],
@@ -187,88 +250,7 @@ export default defineComponent({
         layers: [
           {
             camera: { orthographic: {}, transform: { translateRelativeViewport: { x: 1 } } },
-            objects: [
-              {
-                geometry: {
-                  cone: { radius: 5, height: 5, radialSegments: 20, heightSegments: 20 },
-                },
-                material: {
-                  type: MaterialType.Toon,
-                  params: {
-                    color: 0x253157,
-                  },
-                },
-                transform: {
-                  alignment: { x: Alignment.Center, y: Alignment.Center },
-                  translate: { z: -4, y: -0.2 },
-                  rotateDeg: { x: 25 },
-                },
-              },
-              {
-                geometry: {
-                  sphere: { radius: 0.5, widthSegments: 100, heightSegments: 100 },
-                },
-                material: {
-                  type: MaterialType.Toon,
-                  params: {
-                    color: 0xfbcb3c,
-                  },
-                },
-                transform: {
-                  alignment: { x: Alignment.Start, y: Alignment.End },
-                  translate: { z: -1, y: 0 },
-                  translateRelative: { x: 0.1, y: 0.1 },
-                },
-              },
-              {
-                geometry: {
-                  sphere: { radius: 0.5, widthSegments: 50, heightSegments: 50 },
-                },
-                material: {
-                  type: MaterialType.Toon,
-                  params: {
-                    color: 0x564514,
-                  },
-                },
-                transform: {
-                  scaleToViewport: { width: 6 },
-                  alignment: { x: Alignment.Center, y: Alignment.Center },
-                  translateRelative: { z: -1 },
-                },
-              },
-            ],
-
-            lights: [
-              { type: LightType.Hemisphere, params: { color: 0xffffff } },
-              {
-                type: LightType.Spot,
-                params: { color: 0xffffff, intensity: 1 },
-                transform: { alignment: { x: Alignment.Center, y: Alignment.Center }, translate: { x: 0, z: 2 } },
-              },
-              {
-                type: LightType.Spot,
-                params: { color: 0xffffff, intensity: 0.5 },
-                transform: { alignment: { x: Alignment.Center, y: Alignment.Center }, translate: { y: 1, z: 2 } },
-                shadow: true,
-              },
-              {
-                type: LightType.Spot,
-                params: { color: 0xffffff, intensity: 0.5 },
-                transform: { alignment: { x: Alignment.Center, y: Alignment.Center }, translate: { x: 0, z: 2 } },
-
-                shadow: true,
-              },
-            ],
-
-            devices: [
-              {
-                transform: {
-                  scaleToViewport: { height: 0.75 },
-                  alignment: { x: Alignment.Start, y: Alignment.Center },
-                  rotateDeg: { x: -35, z: 45 },
-                },
-              },
-            ],
+            ...background,
           },
           {
             camera: { orthographic: {}, transform: { translateRelativeViewport: { x: 1 } } },
@@ -283,7 +265,7 @@ export default defineComponent({
             devices: [
               {
                 transform: {
-                  scaleToViewport: { height: 0.75 },
+                  scaleToViewport: { height: 0.9 },
                   alignment: { x: Alignment.Start, y: Alignment.Center },
                   rotateDeg: { x: -35, z: 45 },
                 },
@@ -294,13 +276,13 @@ export default defineComponent({
             camera: { orthographic: {} },
             texts: [
               {
-                message: `Dodge Asteroids \n to become the best\n  rocket pilot ever!`,
-                font: FontType.CarterOne,
+                message: `Consult the I Ching\neasily, without\ncarrying any coin\naround`,
+                font: FontType.Lobster,
                 shadow: {},
+                size: 1.75,
                 transform: {
-                  scale: 1.25,
                   alignment: { x: Alignment.Center, y: Alignment.Start },
-                  translate: { y: 0.4 },
+                  translate: { y: -0.2 },
                 },
               },
             ],
@@ -312,88 +294,7 @@ export default defineComponent({
         layers: [
           {
             camera: { orthographic: {}, transform: { translateRelativeViewport: { x: 2 } } },
-            objects: [
-              {
-                geometry: {
-                  cone: { radius: 5, height: 5, radialSegments: 20, heightSegments: 20 },
-                },
-                material: {
-                  type: MaterialType.Toon,
-                  params: {
-                    color: 0x253157,
-                  },
-                },
-                transform: {
-                  alignment: { x: Alignment.Center, y: Alignment.Center },
-                  translate: { z: -4, y: -0.2 },
-                  rotateDeg: { x: 25 },
-                },
-              },
-              {
-                geometry: {
-                  sphere: { radius: 0.5, widthSegments: 100, heightSegments: 100 },
-                },
-                material: {
-                  type: MaterialType.Toon,
-                  params: {
-                    color: 0xfbcb3c,
-                  },
-                },
-                transform: {
-                  alignment: { x: Alignment.Start, y: Alignment.End },
-                  translate: { z: -1, y: 0 },
-                  translateRelative: { x: 0.1, y: 0.1 },
-                },
-              },
-              {
-                geometry: {
-                  sphere: { radius: 0.5, widthSegments: 50, heightSegments: 50 },
-                },
-                material: {
-                  type: MaterialType.Toon,
-                  params: {
-                    color: 0x564514,
-                  },
-                },
-                transform: {
-                  scaleToViewport: { width: 6 },
-                  alignment: { x: Alignment.Center, y: Alignment.Center },
-                  translateRelative: { z: -1 },
-                },
-              },
-            ],
-
-            lights: [
-              { type: LightType.Hemisphere, params: { color: 0xffffff } },
-              {
-                type: LightType.Spot,
-                params: { color: 0xffffff, intensity: 1 },
-                transform: { alignment: { x: Alignment.Center, y: Alignment.Center }, translate: { x: 0, z: 2 } },
-              },
-              {
-                type: LightType.Spot,
-                params: { color: 0xffffff, intensity: 0.5 },
-                transform: { alignment: { x: Alignment.Center, y: Alignment.Center }, translate: { y: 1, z: 2 } },
-                shadow: true,
-              },
-              {
-                type: LightType.Spot,
-                params: { color: 0xffffff, intensity: 0.5 },
-                transform: { alignment: { x: Alignment.Center, y: Alignment.Center }, translate: { x: 0, z: 2 } },
-
-                shadow: true,
-              },
-            ],
-
-            devices: [
-              {
-                transform: {
-                  scaleToViewport: { height: 0.75 },
-                  alignment: { x: Alignment.Start, y: Alignment.Center },
-                  rotateDeg: { x: -35, z: 45 },
-                },
-              },
-            ],
+            ...background,
           },
           {
             camera: { orthographic: {} },
@@ -408,9 +309,162 @@ export default defineComponent({
             devices: [
               {
                 transform: {
-                  scaleToViewport: { height: 0.9 },
+                  scaleToViewport: { width: 0.8 },
                   alignment: { x: Alignment.Center, y: Alignment.Center },
-                  translate: { y: -0.75 },
+                  translate: { y: -0.45 },
+                },
+              },
+            ],
+          },
+          {
+            camera: { orthographic: {} },
+            texts: [
+              {
+                message: `1. Make a question`,
+                font: FontType.Lobster,
+                shadow: {},
+                size: 1.75,
+                transform: {
+                  alignment: { x: Alignment.Center, y: Alignment.Start },
+                  translate: { y: -0.15 },
+                },
+              },
+            ],
+          },
+        ],
+      },
+      {
+        aspectRatio: 9 / 16,
+        layers: [
+          {
+            camera: { orthographic: {}, transform: { translateRelativeViewport: { x: 3 } } },
+            ...background,
+          },
+          {
+            camera: { orthographic: {} },
+            lights: [
+              { type: LightType.Hemisphere, params: { color: 0xffffff } },
+              {
+                type: LightType.Spot,
+                params: { color: 0xffffff, intensity: 0.05 },
+                transform: { alignment: { x: Alignment.Center, y: Alignment.Center }, translate: { y: 1, z: 2 } },
+              },
+            ],
+            devices: [
+              {
+                transform: {
+                  scaleToViewport: { width: 0.8 },
+                  alignment: { x: Alignment.Center, y: Alignment.Center },
+                  translate: { y: 0.45 },
+                },
+              },
+            ],
+          },
+          {
+            camera: { orthographic: {} },
+            texts: [
+              {
+                message: `2. Toss the coins`,
+                font: FontType.Lobster,
+                shadow: {},
+                size: 1.75,
+                transform: {
+                  alignment: { x: Alignment.Center, y: Alignment.End },
+                  translate: { y: 0.15 },
+                },
+              },
+            ],
+          },
+        ],
+      },
+      {
+        aspectRatio: 9 / 16,
+        layers: [
+          {
+            camera: { orthographic: {}, transform: { translateRelativeViewport: { x: 4 } } },
+            ...background,
+          },
+          {
+            camera: { orthographic: {} },
+            lights: [
+              { type: LightType.Hemisphere, params: { color: 0xffffff } },
+              {
+                type: LightType.Spot,
+                params: { color: 0xffffff, intensity: 0.05 },
+                transform: { alignment: { x: Alignment.Center, y: Alignment.Center }, translate: { y: 1, z: 2 } },
+              },
+            ],
+            devices: [
+              {
+                transform: {
+                  scaleToViewport: { height: 1.2 },
+                  alignment: { x: Alignment.Center, y: Alignment.Center },
+                  rotateDeg: { z: -45 },
+                  translateRelativeViewport: { x: 0.5 },
+                },
+              },
+            ],
+          },
+          {
+            camera: { orthographic: {} },
+            texts: [
+              {
+                message: `Customize your\nexperience.\nDecide what\ninformation \nis shown.`,
+                font: FontType.Lobster,
+                shadow: {},
+                size: 1.75,
+                transform: {
+                  alignment: { x: Alignment.Start, y: Alignment.Start },
+                  translate: { x: 0.1, y: -0.1 },
+                },
+              },
+            ],
+          },
+        ],
+      },
+      {
+        aspectRatio: 9 / 16,
+        layers: [
+          {
+            camera: { orthographic: {}, transform: { translateRelativeViewport: { x: 5 } } },
+            ...background,
+          },
+          {
+            camera: { orthographic: {} },
+            lights: [
+              { type: LightType.Hemisphere, params: { color: 0xffffff } },
+              {
+                type: LightType.Spot,
+                params: { color: 0xffffff, intensity: 0.05 },
+                transform: { alignment: { x: Alignment.Center, y: Alignment.Center }, translate: { y: 1, z: 2 } },
+              },
+            ],
+            devices: [
+              {
+                transform: {
+                  scaleToViewport: { height: 1.2 },
+                  alignment: { x: Alignment.Center, y: Alignment.Center },
+                  rotateDeg: { z: -45 },
+                  translateRelativeViewport: { x: -0.5 },
+                },
+              },
+            ],
+          },
+          {
+            camera: { orthographic: {} },
+            texts: [
+              {
+                message: `                   Check your
+               your journal!
+                    Review the
+              questions you
+        made in the past.`,
+                font: FontType.Lobster,
+                shadow: {},
+                size: 1.75,
+                transform: {
+                  alignment: { x: Alignment.Center, y: Alignment.End },
+                  translate: { x: 0.1 },
                 },
               },
             ],
@@ -427,129 +481,17 @@ export default defineComponent({
       screenshot: ref<string>('/assets/screenshot.png'),
 
       scenes: ref<SceneParams[]>(scenes),
+    }
 
-      //   [
-      //   {
-      //     camera: {
-      //       type: 'orthographic',
-      //     },
-
-      //     background,
-
-      //     texts: [
-      //       {
-      //         message: 'Asteroids!',
-      //         alignment: 'left',
-      //         position: 'top',
-      //         offsetX: 0.2,
-      //         offsetY: -0.2,
-      //         size: 2,
-      //       },
-      //     ],
-      //     devices: [
-      //       {
-      //         type: DeviceType.SamsungS10,
-
-      //         transform: {
-      //           scale: 2.5,
-      //           translateX: 1,
-      //           translateY: 0,
-      //           rotateX: Math.PI * -0.2,
-      //           rotateZ: Math.PI * 0.2,
-      //         },
-      //       },
-      //     ],
-      //   },
-      //   {
-      //     camera: {
-      //       type: 'orthographic',
-      //     },
-
-      //     background,
-
-      //     texts: [
-      //       {
-      //         message: `Dodge Asteroids \n to become the best\n  rocket pilot ever!`,
-      //         alignment: 'right',
-      //         position: 'top',
-      //         offsetX: -0.2,
-      //         offsetY: -0.2,
-      //         size: 1.25,
-      //       },
-      //     ],
-      //     devices: [
-      //       {
-      //         type: DeviceType.SamsungS10,
-
-      //         transform: {
-      //           scale: 2.5,
-      //           translateX: -1,
-      //           translateY: 0,
-      //           rotateX: Math.PI * -0.2,
-      //           rotateZ: Math.PI * 0.2,
-      //         },
-      //       },
-      //     ],
-      //   },
-      //   {
-      //     camera: {
-      //       type: 'orthographic',
-      //     },
-      //     devices: [
-      //       {
-      //         type: DeviceType.SamsungS10,
-
-      //         transform: {
-      //           scale: 2.4,
-      //           translateX: 0,
-      //           translateY: -1,
-      //         },
-      //       },
-      //     ],
-      //   },
-      //   {
-      //     camera: {
-      //       type: 'perspective',
-      //     },
-      //     devices: [
-      //       {
-      //         type: DeviceType.SamsungS10,
-
-      //         transform: {
-      //           scale: 1.5,
-      //           translateX: 0.25,
-      //           translateY: -0.6,
-      //           rotateY: Math.PI * 0.15,
-      //         },
-      //       },
-      //     ],
-      //   },
-      //   // {
-      //   //   background: {
-      //   //     type: 'BackgroundColor',
-      //   //     colors: ['#2AD5C6'],
-      //   //   },
-      //   //   layout: {
-      //   //     type: 'LayoutIsometric',
-      //   //     devices: [
-      //   //       {
-      //   //         type: 'pixel4xl',
-      //   //         scale: 1,
-      //   //         origin: 'top left',
-      //   //         position: {
-      //   //           y: `40%`,
-      //   //           x: `-135%`,
-      //   //         },
-      //   //       },
-      //   //     ],
-      //   //     text: 'hello world',
-      //   //   },
-      //   // },
-      // ]
+    const methods = {
+      updateSceneLayer(sceneIndex: number, layerIndex: number, layer: SceneLayer) {
+        state.scenes.value[sceneIndex].layers[layerIndex] = layer
+      },
     }
 
     return {
       ...state,
+      ...methods,
     }
   },
 })

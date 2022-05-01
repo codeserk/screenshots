@@ -1,4 +1,4 @@
-import { Group, Mesh, MeshPhongMaterial, Object3D, Texture, TextureLoader, Vector2 } from 'three'
+import { Group, Mesh, MeshPhongMaterial, MeshToonMaterial, Object3D, Texture, TextureLoader, Vector2 } from 'three'
 import { loadMTL, loadObj } from '../../../util/loader'
 import { devices } from './devices'
 import { DeviceType } from './interfaces/device.interface'
@@ -65,8 +65,10 @@ export function setTexture(type: DeviceType, object: Object3D, texture: Texture)
           material.needsUpdate = true
         }
       }
-    } else if (front.material instanceof MeshPhongMaterial) {
-      front.material.map = texture
+    } else if (front.material) {
+      const newMaterial = new MeshToonMaterial()
+      newMaterial.map = texture
+      front.material = newMaterial
       front.material.needsUpdate = true
     } else {
       console.log('not found', front.material)

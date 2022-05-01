@@ -37,7 +37,6 @@ export function transformObject(object: Object3D, transform: SceneObjectTransfor
     if (transform.scaleToViewport?.width) {
       const scale = (viewport.width / size.x) * transform.scaleToViewport?.width
       object.scale.set(scale, scale, scale)
-      console.log('to viewport', size, scale)
       size = calculateSize(object)
     }
     if (transform.scaleToViewport?.height) {

@@ -5,6 +5,7 @@ import { createBoxGeometry } from './box.factory'
 import { createConeGeometry } from './cone.factory'
 import { createRingGeometry } from './ring.factory'
 import { createSphereGeometry } from './sphere.factory'
+import { createTorusGeometry } from './torus.geometry'
 import { createTubeGeometry } from './tube.factory'
 
 const GEOMETRY_FACTORY: Record<GeometryType, (params: any) => Promise<BufferGeometry>> = {
@@ -13,6 +14,7 @@ const GEOMETRY_FACTORY: Record<GeometryType, (params: any) => Promise<BufferGeom
   [GeometryType.Cone]: createConeGeometry,
   [GeometryType.Sphere]: createSphereGeometry,
   [GeometryType.Tube]: createTubeGeometry,
+  [GeometryType.Torus]: createTorusGeometry,
 }
 
 const types = Object.values(GeometryType)
